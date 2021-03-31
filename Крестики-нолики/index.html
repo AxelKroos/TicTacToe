@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Крестики-нолики</title>
+    <link rel="stylesheet" type="text/css"   href="index.css">
+    <script src="https://npmcdn.com/react@15.3.0/dist/react.js"></script>
+    <script src="https://npmcdn.com/react-dom@15.3.0/dist/react-dom.js"></script>
+    <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
+    <script src="https://npmcdn.com/jquery@3.1.0/dist/jquery.min.js"></script>
+    <script src="https://npmcdn.com/remarkable@1.6.2/dist/remarkable.min.js"></script>
+    <script type="text/javascript" src=" https://code.jquery.com/jquery-1.11.2.js"></script>
+</head>
+
+<body>
+<div id="content">
+</div>
+<script type="text/babel">
+    class GameField extends React.Component
+    {
+        constructor(){
+            super();
+            this.state = {
+                cells : Array(9).fill(null),
+                i : 0,
+                x : 0,
+                y : 0
+            };
+        }
+
+        clickHandler(event){
+            let target = event.target;
+            if(target.innerHTML == '')
+            {
+                let symb = ['X','O'][ this.state.i % 2 ];
+                this.state.cells[event.target.dataset.num] = symb;
+                this.setState({cells : this.state.cells});
+                console.log(this.state.cells);
+                if(this.isVictory(this.state.cells))
+                {
+                    alert('Победа ' + symb);
+                    this.clearField();
+                    symb == 'X' ? this.state.x++ : this.state.y++;
+                }
+                else if(this.state.i == 8)
+                {
+                    alert('Ничья');
+                    this.clearField();
+                }
+
+                this.state.i++;
+                this.setState({i : this.state.i });
+            }
+        }
+
+        isVictory(cells)
+        {
+            let combs = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6],
+            ];
+
+            for(let comb of combs)
+            {
+                if(cells[comb[0]]!= null)
+                {
+                    if((cells[comb[0]] == cells[comb[1]])
+                        && (cells[comb[1]] == cells[comb[2]])
+                        && (cells[comb[1]] != ''))
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        clearField()
+        {
+            this.state.cells = Array(9).fill(null);
+            this.state.i = 0;
+            this.setState({cells: this.state.cells, i : this.state.i});
+            console.log(this.state.cells);
+        }
+
+        render(){
+            return  <div id = 'parent'>
+                <div id="account">
+                    <p id="x">Счёт крестиков: {this.state.x}</p>
+                    <p id="y">Счёт ноликов: {this.state.y}</p>
+                </div>
+                <table id="field">
+                    <tbody>
+                    <tr>
+                        <td onClick = {this.clickHandler.bind(this)} data-num = '0'>{this.state.cells[0]}</td>
+                        <td onClick = {this.clickHandler.bind(this)} data-num = '1'>{this.state.cells[1]}</td>
+                        <td onClick = {this.clickHandler.bind(this)} data-num = '2'>{this.state.cells[2]}</td>
+                    </tr>
+                    <tr>
+                        <td onClick = {this.clickHandler.bind(this)} data-num = '3'>{this.state.cells[3]}</td>
+                        <td onClick = {this.clickHandler.bind(this)} data-num = '4'>{this.state.cells[4]}</td>
+                        <td onClick = {this.clickHandler.bind(this)} data-num = '5'>{this.state.cells[5]}</td>
+                    </tr>
+                    <tr>
+                        <td onClick = {this.clickHandler.bind(this)} data-num = '6'>{this.state.cells[6]}</td>
+                        <td onClick = {this.clickHandler.bind(this)} data-num = '7'>{this.state.cells[7]}</td>
+                        <td onClick = {this.clickHandler.bind(this)} data-num = '8'>{this.state.cells[8]}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+
+    class App extends React.Component
+    {
+        constructor(){
+            super();
+            this.state = {};
+        }
+
+
+        render(){
+            return  <div>
+                <GameField/>
+            </div>
+        }
+    }
+
+    ReactDOM.render(<App/>, document.getElementById('content'));
+</script>
+</body>
+</html>
